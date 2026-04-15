@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<!--
+  © 2026 MyCoin Project — PROPRIETARY AND CONFIDENTIAL
+  All Rights Reserved. Unauthorized copying, modification,
+  distribution, or use of this file is strictly prohibited.
+  See LICENSE file in the project root for full details.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Details — MyCoin Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   MYCOIN EXPLORER — DARK THEME (exact screenshot match)
+═══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:    #0d0f18;
+  --c1:    #121520;
+  --c2:    #181c2c;
+  --c3:    #1e2238;
+  --bd:    rgba(255,255,255,.07);
+  --bd2:   rgba(255,255,255,.13);
+  --txt:   #dce1f2;
+  --sub:   #6e7898;
+  --mut:   #404766;
+  --gold:  #f0a500;
+  --go2:   #ffd060;
+  --grn:   #00e676;
+  --grn2:  rgba(0,230,118,.09);
+  --grn3:  rgba(0,230,118,.24);
+  --cyn:   #00cccc;
+  --pur:   #a78bfa;
+  --pend:  #fbbf24;
+  --r: 12px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;font-size:14px;line-height:1.5;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 65% 38% at 18% 0%,rgba(240,165,0,.052) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 32% at 88% 100%,rgba(79,142,247,.038) 0%,transparent 55%);
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar{
+  background:rgba(13,15,24,.94);border-bottom:1px solid var(--bd);
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+}
+.tb-in{
+  max-width:1060px;margin:0 auto;padding:0 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:54px;gap:12px;
+}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.logo-ic{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--go2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:#000;
+  box-shadow:0 0 16px rgba(240,165,0,.28);
+  animation:glw 3s ease-in-out infinite;
+}
+@keyframes glw{0%,100%{box-shadow:0 0 16px rgba(240,165,0,.28)}50%{box-shadow:0 0 28px rgba(240,165,0,.5)}}
+.logo-txt{font-size:16px;font-weight:900;color:var(--gold)}
+.tnav{display:flex;gap:2px}
+.tnav a{padding:6px 12px;border-radius:6px;font-size:13px;font-weight:500;color:var(--sub);text-decoration:none;transition:all .15s}
+.tnav a:hover{background:var(--c2);color:var(--txt)}
+.tnav a.on{color:var(--gold);font-weight:700}
+.swrap{
+  display:flex;align-items:center;flex:1;max-width:360px;
+  background:var(--c2);border:1px solid var(--bd2);
+  border-radius:7px;overflow:hidden;transition:border-color .2s;
+}
+.swrap:focus-within{border-color:rgba(240,165,0,.45)}
+.swrap input{
+  flex:1;padding:7px 12px;background:none;border:none;outline:none;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt);direction:ltr;
+}
+.swrap input::placeholder{font-family:'Sora',sans-serif;color:var(--mut);font-size:12px}
+.swrap button{
+  padding:7px 14px;background:var(--gold);border:none;cursor:pointer;
+  font-size:12px;font-weight:800;color:#000;white-space:nowrap;transition:all .15s;
+}
+.swrap button:hover{background:var(--go2)}
+
+/* ═══ PAGE ═══ */
+.page{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:22px 20px 80px}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.ph-l{display:flex;align-items:center;gap:12px}
+.ph-title{font-size:19px;font-weight:900}
+.ph-nav{display:flex;gap:4px}
+.ph-nav button{
+  width:28px;height:28px;border-radius:6px;border:1px solid var(--bd2);
+  background:var(--c1);cursor:pointer;font-size:13px;color:var(--sub);
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.ph-nav button:hover{background:var(--c2);color:var(--txt)}
+.net-tag{
+  font-size:10px;font-weight:800;padding:3px 10px;border-radius:5px;
+  letter-spacing:.5px;background:rgba(240,165,0,.1);
+  border:1px solid rgba(240,165,0,.25);color:var(--gold);
+}
+
+/* ═══ CARD ═══ */
+.card{
+  background:var(--c1);border:1px solid var(--bd);border-radius:var(--r);
+  overflow:hidden;margin-bottom:12px;
+  animation:fu .38s ease both;
+}
+.card:nth-child(2){animation-delay:.05s}
+.card:nth-child(3){animation-delay:.1s}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ BANNER — exact match to screenshot ═══ */
+.banner{
+  padding:13px 18px;
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+}
+/* address chip — dark bg, gold text, like screenshot */
+.achip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;
+  color:var(--grn);
+  background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.18);
+  border-radius:7px;padding:5px 12px;cursor:pointer;transition:all .15s;
+}
+.achip:hover{background:rgba(0,230,118,.13);border-color:rgba(0,230,118,.35)}
+.achip .sym{font-size:10px;color:var(--mut);margin-left:2px}
+.achip .ci{font-size:10px;color:var(--mut);transition:color .15s}
+.achip:hover .ci{color:var(--grn)}
+/* centre amount badge */
+.amtbadge{
+  display:inline-flex;align-items:center;gap:9px;
+  background:linear-gradient(135deg,rgba(240,165,0,.12),rgba(240,165,0,.06));
+  border:1px solid rgba(240,165,0,.32);border-radius:10px;padding:7px 18px;
+}
+.amtbadge .an{font-size:17px;font-weight:900;color:var(--gold);letter-spacing:-.3px}
+.amtbadge .as{font-size:13px;font-weight:700;color:var(--go2)}
+.coin-m{
+  width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--go2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:900;color:#000;flex-shrink:0;
+}
+.bword{font-size:13px;color:var(--sub);font-weight:600;white-space:nowrap}
+.barrow{font-size:18px;color:var(--mut)}
+
+/* ═══ CARD HEADER ═══ */
+.card-hdr{
+  padding:12px 20px;border-bottom:1px solid var(--bd);
+  font-size:11.5px;font-weight:700;color:var(--sub);
+  letter-spacing:.6px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.card-hdr .hd{width:7px;height:7px;border-radius:50%;background:var(--grn)}
+
+/* ═══ ROW ═══ */
+.row{
+  display:grid;grid-template-columns:160px 1fr;
+  align-items:start;padding:13px 20px;
+  border-bottom:1px solid var(--bd);transition:background .1s;
+}
+.row:last-child{border-bottom:none}
+.row:hover{background:rgba(255,255,255,.017)}
+.rl{
+  display:flex;align-items:flex-start;gap:6px;
+  font-size:12.5px;color:var(--sub);font-weight:600;
+  padding-top:2px;white-space:nowrap;
+}
+.rl-stk{display:flex;flex-direction:column;gap:4px}
+.rl-sub{font-size:11px;color:var(--mut);font-weight:400;padding-right:21px}
+.qm{
+  width:15px;height:15px;border-radius:50%;
+  background:rgba(255,255,255,.05);border:1px solid var(--bd2);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:8.5px;color:var(--mut);flex-shrink:0;cursor:help;margin-top:1px;
+}
+.rv{font-size:13px;color:var(--txt);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ═══ HASH ═══ */
+.htxt{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--sub);word-break:break-all;line-height:1.8;flex:1;
+}
+.htxt .hl{color:var(--txt);font-weight:700}
+.cpbtn{
+  width:26px;height:26px;border-radius:6px;flex-shrink:0;
+  background:rgba(255,255,255,.04);border:1px solid var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:11px;color:var(--sub);transition:all .15s;
+}
+.cpbtn:hover{color:var(--gold);border-color:rgba(240,165,0,.3);background:rgba(240,165,0,.07)}
+.cpbtn.ok{color:var(--grn);border-color:var(--grn3);background:var(--grn2)}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:4px 12px;font-size:12px;font-weight:700}
+.b-ok  {background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.28);color:var(--grn)}
+.b-conf{background:rgba(0,230,118,.09);border:1px solid rgba(0,230,118,.22);color:var(--grn)}
+.b-pend{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--pend)}
+.pdot{
+  width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;
+  animation:pp 1.8s infinite;
+}
+@keyframes pp{
+  0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,230,118,.5)}
+  60%{opacity:.7;box-shadow:0 0 0 5px rgba(0,230,118,0)}
+}
+
+/* ═══ BLOCK LINK ═══ */
+.blnk{
+  font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:800;
+  color:var(--gold);text-decoration:none;
+  background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.22);
+  border-radius:7px;padding:3px 12px;transition:all .15s;
+}
+.blnk:hover{background:rgba(240,165,0,.18)}
+.tsep{color:var(--mut);margin:0 4px}
+
+/* ═══ CONFIRM BAR ═══ */
+.cbar{display:flex;align-items:center;gap:10px;width:100%;margin-top:5px}
+.ctrack{flex:1;max-width:240px;height:5px;border-radius:3px;background:var(--c3);overflow:hidden}
+.cfill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--grn),#69f0ae);
+  animation:grow .9s ease .1s both;
+}
+@keyframes grow{from{width:0}to{width:100%}}
+.clbl{
+  font-family:'JetBrains Mono',monospace;
+  font-weight:700;color:var(--grn);font-size:12px;
+  display:flex;align-items:center;gap:5px;
+}
+
+/* ═══ SR CHIPS — exact match to screenshot ═══ */
+.srlist{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.srchip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:600;color:var(--sub);
+  background:var(--c2);border:1px solid var(--bd);
+  border-radius:7px;padding:4px 12px;transition:all .15s;cursor:default;
+}
+.srchip:hover{background:var(--c3);color:var(--txt);border-color:var(--bd2)}
+.srmore{
+  color:var(--gold);font-weight:800;
+  border-color:rgba(240,165,0,.16);background:rgba(240,165,0,.05);
+  cursor:pointer;
+}
+.srmore:hover{background:rgba(240,165,0,.12);border-color:rgba(240,165,0,.32)}
+
+/* ═══ RESOURCES ═══ */
+.resrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.resitm{display:flex;align-items:center;gap:6px}
+.resval{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--cyn)}
+.reslbl{font-size:12px;font-weight:600;color:var(--sub)}
+.ressep{width:1px;height:18px;background:var(--bd2)}
+.feecap{
+  font-size:11.5px;color:var(--mut);
+  background:var(--c2);border:1px solid var(--bd);
+  border-radius:5px;padding:3px 10px;
+}
+
+/* ═══ TABS ═══ */
+.tabbar{display:flex;border-bottom:1px solid var(--bd);padding:0 20px}
+.tab{
+  padding:12px 16px;cursor:pointer;
+  font-size:12.5px;font-weight:700;color:var(--sub);
+  border-bottom:2px solid transparent;transition:all .2s;
+  white-space:nowrap;margin-bottom:-1px;
+}
+.tab:hover{color:var(--txt)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.evn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:5px;
+  font-size:10px;font-weight:800;
+  background:rgba(240,165,0,.14);color:var(--gold);margin-right:5px;
+}
+.tab.on .evn{background:var(--gold);color:#000}
+
+/* ═══ OVERVIEW DETAIL ═══ */
+.sctag{font-size:10px;font-weight:800;color:#000;background:var(--sub);border-radius:3px;padding:2px 6px;flex-shrink:0}
+.toktag{font-size:11.5px;font-weight:700;color:var(--gold);background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.22);border-radius:6px;padding:2px 9px}
+/* green address chip in detail rows */
+.gchip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;
+  color:var(--grn);background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.18);
+  border-radius:7px;padding:5px 12px;cursor:pointer;transition:all .15s;
+}
+.gchip:hover{background:rgba(0,230,118,.13);border-color:rgba(0,230,118,.35)}
+.gchip .ci{font-size:10px;color:var(--mut)}
+.gchip:hover .ci{color:var(--grn)}
+
+/* ═══ TOKEN TRANSFER ═══ */
+.tt{padding:13px 20px;border-bottom:1px solid var(--bd)}
+.ttlbl{font-size:12.5px;color:var(--sub);font-weight:600;margin-bottom:11px}
+.ttlbl strong{color:var(--txt)}
+.ttflow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.ttword{font-size:12px;color:var(--sub);font-weight:700;white-space:nowrap}
+.ttar{font-size:14px;color:var(--mut)}
+.ttamt{display:flex;align-items:center;gap:7px;margin-right:4px}
+.ttn{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--gold);letter-spacing:-.3px}
+.tts{font-size:13px;font-weight:600;color:var(--go2)}
+
+/* ═══ METHOD ═══ */
+.mblock{padding:14px 20px}
+.mlbl{font-size:12px;color:var(--sub);font-weight:600;margin-bottom:10px}
+.msig{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--pur);
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.18);
+  border-radius:7px;padding:7px 14px;display:inline-block;margin-bottom:14px;
+}
+.ptbl{width:100%;border-collapse:collapse;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.ptbl th{
+  padding:9px 14px;background:rgba(255,255,255,.02);
+  font-size:10.5px;color:var(--mut);font-weight:700;
+  text-align:right;border-bottom:1px solid var(--bd);letter-spacing:.4px;
+}
+.ptbl td{padding:11px 14px;font-size:12.5px;border-bottom:1px solid rgba(13,15,24,.7)}
+.ptbl tr:last-child td{border-bottom:none}
+.ptbl tr:hover td{background:rgba(255,255,255,.015)}
+.p0{color:var(--mut);font-family:'JetBrains Mono',monospace}
+.p1{color:var(--txt);font-weight:600}
+.p2{color:var(--pur);font-family:'JetBrains Mono',monospace;font-size:12px}
+.p3{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyn);cursor:pointer;word-break:break-all}
+.p3:hover{text-decoration:underline}
+.pgold{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--gold)}
+
+/* ═══ EVENTS ═══ */
+.evpane{padding:32px 20px;text-align:center;color:var(--sub)}
+.evpane .evi{font-size:34px;margin-bottom:12px}
+.evsig{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);margin-top:8px}
+.evtbl{
+  margin-top:18px;max-width:520px;margin-left:auto;margin-right:auto;
+  border:1px solid var(--bd);border-radius:8px;overflow:hidden;text-align:right;
+}
+.evrow{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);font-size:12.5px}
+.evrow:last-child{border-bottom:none}
+.evkey{color:var(--sub);font-weight:600}
+.evval{font-family:'JetBrains Mono',monospace;color:var(--cyn);word-break:break-all;max-width:320px;text-align:right}
+
+/* ═══ SKELETON ═══ */
+.sk{
+  display:inline-block;border-radius:5px;
+  background:linear-gradient(90deg,var(--c2) 25%,var(--c3) 50%,var(--c2) 75%);
+  background-size:400% 100%;animation:shim 1.4s ease infinite;
+}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ═══ NOT FOUND ═══ */
+.nf{
+  background:var(--c1);border:1px solid var(--bd);
+  border-radius:var(--r);padding:60px 24px;text-align:center;
+  animation:fu .38s ease both;
+}
+.nf h2{font-size:18px;font-weight:900;margin-bottom:8px}
+.nf p{font-size:13px;color:var(--sub);max-width:400px;margin:0 auto 20px}
+.nf-inp{
+  width:100%;max-width:440px;padding:11px 14px;
+  border:1px solid var(--bd2);border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--txt);
+  background:var(--c2);outline:none;direction:ltr;transition:border-color .2s;
+}
+.nf-inp:focus{border-color:rgba(240,165,0,.5)}
+.nf-inp::placeholder{color:var(--mut)}
+.nf-btn{
+  margin-top:10px;padding:10px 24px;
+  background:var(--gold);color:#000;border:none;
+  border-radius:7px;font-family:'Sora',sans-serif;
+  font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.nf-btn:hover{background:var(--go2);transform:translateY(-1px)}
+.nf-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* ═══ TOAST ═══ */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--c2);border:1px solid var(--grn);color:var(--grn);
+  font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;
+  box-shadow:0 6px 24px rgba(0,0,0,.5);
+  opacity:0;transition:all .25s;z-index:999;pointer-events:none;white-space:nowrap;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:680px){
+  .row{grid-template-columns:1fr;gap:5px}
+  .tnav{display:none}
+  .ph-title{font-size:16px}
+  .ttflow{gap:7px}
+  .banner{gap:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="tb-in">
+    <a class="logo" href="/">
+      <div class="logo-ic">M</div>
+      <span class="logo-txt">MyCoin Explorer</span>
+    </a>
+    <div class="tnav">
+      <a href="/dashboard.html" class="">Dashboard</a>
+      <a href="/tx.html" class="on">Explorer</a>
+      <a href="/wallet.html" class="">Wallet</a>
+      <a href="/send.html" class="">Send</a>
+      <a href="/admin.html" class="">Admin</a>
+    </div>
+    <div class="swrap">
+      <input id="si" type="text" placeholder="TX hash / block / MYC1... address..."
+             onkeydown="if(event.key==='Enter')go()">
+      <button onclick="go()">Search</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="ph">
+    <div class="ph-l">
+      <h1 class="ph-title">Transaction Details</h1>
+      <div class="ph-nav">
+        <button onclick="history.back()">&#8249;</button>
+        <button onclick="history.forward()">&#8250;</button>
+      </div>
+    </div>
+    <div class="net-tag" id="netTag">MAINNET</div>
+  </div>
+
+  <!-- ─── SKELETON ─── -->
+  <div id="sLoad">
+    <div class="card">
+      <div class="banner" style="gap:12px">
+        <span class="sk" style="width:195px;height:32px;border-radius:7px"></span>
+        <span class="sk" style="width:70px;height:22px;border-radius:5px"></span>
+        <span class="sk" style="width:170px;height:38px;border-radius:10px"></span>
+        <span class="sk" style="width:35px;height:22px;border-radius:5px"></span>
+        <span class="sk" style="width:195px;height:32px;border-radius:7px"></span>
+      </div>
+    </div>
+    <div class="card">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:18px">
+        <span class="sk" style="width:100%;height:14px"></span>
+        <span class="sk" style="width:72%;height:14px"></span>
+        <span class="sk" style="width:86%;height:14px"></span>
+        <span class="sk" style="width:55%;height:14px"></span>
+        <span class="sk" style="width:78%;height:14px"></span>
+        <span class="sk" style="width:65%;height:14px"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── NOT FOUND ─── -->
+  <div id="sNF" style="display:none">
+    <div class="nf">
+      <div style="font-size:44px;margin-bottom:14px">🔍</div>
+      <h2>Transaction Not Found</h2>
+      <p>Transaction Hash وارد شده معتبر نیست یا هنوز confirmations نشده است</p>
+      <input class="nf-inp" id="nfIn" type="text" placeholder="Transaction Hash را وارد کنید..."
+             oninput="document.getElementById('nfBtn').disabled=this.value.trim().length<20"
+             onkeydown="if(event.key==='Enter')nfGo()">
+      <br>
+      <button class="nf-btn" id="nfBtn" onclick="nfGo()" disabled>Search</button>
+    </div>
+  </div>
+
+  <!-- ─── MAIN ─── -->
+  <div id="sMain" style="display:none">
+
+    <!-- BANNER -->
+    <div class="card">
+      <div class="banner" id="banner"></div>
+    </div>
+
+    <!-- INFO CARD -->
+    <div class="card">
+      <div class="card-hdr"><span class="hd"></span>Transaction Info</div>
+
+      <!-- Hash -->
+      <div class="row">
+        <div class="rl"><span class="qm" title="شناسه یکتای تراکنش">?</span>Transaction Hash</div>
+        <div class="rv" style="flex-wrap:nowrap;align-items:flex-start">
+          <span class="htxt" id="hashEl"></span>
+          <button class="cpbtn" id="hcp" title="کپی هش"
+                  onclick="cpBtn(this,g('_txid'))">⎘</button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="row">
+        <div class="rl"><span class="qm" title="Result اجرا">?</span>Result</div>
+        <div class="rv">
+          <span class="badge b-ok">
+            <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+              <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M4 6.2l1.4 1.6 3-3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Success
+          </span>
+        </div>
+      </div>
+
+      <!-- Block & Time -->
+      <div class="row">
+        <div class="rl"><span class="qm" title="blocks confirmationsکننده">?</span>Block & Time</div>
+        <div class="rv">
+          <a class="blnk" id="blnk" href="#">—</a>
+          <button class="cpbtn" id="bhcp" style="width:22px;height:22px;font-size:10px"
+                  onclick="cpBtn(this,g('_bh'))">⎘</button>
+          <span class="tsep">|</span>
+          <span id="tago" style="font-size:12.5px;color:var(--sub)">—</span>
+          <span class="tsep">|</span>
+          <span id="texact" style="font-size:12.5px;color:var(--sub)">—</span>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="row">
+        <div class="rl"><span class="qm" title="Status confirmations">?</span>Status</div>
+        <div class="rv" style="flex-direction:column;align-items:flex-start;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="badge" id="sbadge">—</span>
+            <span id="stext" style="font-size:13px;color:var(--sub)">—</span>
+          </div>
+          <div class="cbar" id="cbar" style="display:none">
+            <div class="ctrack"><div class="cfill"></div></div>
+            <span class="clbl" id="clbl">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SRs -->
+      <div class="row">
+        <div class="rl"><span class="qm" title="نودهای confirmationsکننده">?</span>Validators</div>
+        <div class="rv"><div class="srlist" id="srlist"></div></div>
+      </div>
+
+      <!-- Resources -->
+      <div class="row" style="align-items:flex-start">
+        <div class="rl">
+          <div class="rl-stk">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="qm" title="منابع مصرف شده">?</span>Resources & Fee
+            </div>
+            <div class="rl-sub" id="feelimit">Max Fee: 0 MYC</div>
+          </div>
+        </div>
+        <div class="rv">
+          <div class="resrow">
+            <div class="resitm"><span class="resval" id="rbw">—</span><span class="reslbl">Bandwidth</span></div>
+            <div class="ressep"></div>
+            <div class="resitm"><span class="resval" id="ren">—</span><span class="reslbl">Energy</span></div>
+            <div class="ressep"></div>
+            <span class="feecap" id="feecap">Max Fee: — MYC</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- .card info -->
+
+    <!-- DETAIL CARD -->
+    <div class="card">
+      <div class="tabbar">
+        <div class="tab on" onclick="stab(this,'pOv')">Overview</div>
+        <div class="tab"   onclick="stab(this,'pEv')"><span class="evn">1</span>Event Logs</div>
+      </div>
+
+      <!-- OVERVIEW -->
+      <div id="pOv">
+
+        <!-- Owner -->
+        <div class="row">
+          <div class="rl"><span class="qm" title="آدرس Send‌کننده">?</span>Owner Address</div>
+          <div class="rv">
+            <button class="gchip" id="ownBtn" onclick="cpBtn(this,g('_from'))">
+              <span class="sym">⊗</span><span id="ownTxt">—</span><span class="ci">⎘</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contract -->
+        <div class="row">
+          <div class="rl"><span class="qm" title="قرارداد هوشمند توکن">?</span>Contract Address</div>
+          <div class="rv" style="gap:7px">
+            <span class="sctag">SC</span>
+            <button class="gchip" id="ctBtn" onclick="cpBtn(this,g('_ct'))">
+              <span class="sym">⊗</span><span id="ctTxt">—</span><span class="ci">⎘</span>
+            </button>
+            <span class="toktag">MYC Token</span>
+          </div>
+        </div>
+
+        <!-- Token Transfer -->
+        <div class="tt">
+          <div class="ttlbl">Token Transfer: <strong>1</strong></div>
+          <div class="ttflow">
+            <span class="ttword">From</span>
+            <button class="gchip" id="ttfBtn" style="font-size:12px;padding:4px 10px"
+                    onclick="cpBtn(this,g('_from'))">
+              <span class="sym">⊗</span><span id="ttfTxt">—</span><span class="ci">⎘</span>
+            </button>
+            <span class="ttar">←</span>
+            <span class="ttword">To</span>
+            <button class="gchip" id="tttBtn" style="font-size:12px;padding:4px 10px"
+                    onclick="cpBtn(this,g('_to'))">
+              <span class="sym">⊗</span><span id="tttTxt">—</span><span class="ci">⎘</span>
+            </button>
+            <div class="ttamt">
+              <span class="ttn" id="ttamt">—</span>
+              <span class="coin-m">M</span>
+              <span class="tts" id="ttsym">MYC</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="row">
+          <div class="rl"><span class="qm" title="Amount کوین اصلی">?</span>Amount</div>
+          <div class="rv">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--sub)"
+                  id="namt">0 MYC</span>
+          </div>
+        </div>
+
+        <!-- Method -->
+        <div class="mblock">
+          <div class="mlbl">Method Called</div>
+          <div class="msig">transfer(address recipient, uint256 amount)</div>
+          <table class="ptbl">
+            <thead>
+              <tr><th style="width:38px">#</th><th>نام</th><th>نوع</th><th>داده</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p0">0</td>
+                <td class="p1">recipient</td>
+                <td class="p2">address</td>
+                <td class="p3" id="pr" onclick="cpTxt(g('_to'))">—</td>
+              </tr>
+              <tr>
+                <td class="p0">1</td>
+                <td class="p1">amount</td>
+                <td class="p2">uint256</td>
+                <td class="pgold" id="pa">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- pOv -->
+
+      <!-- EVENTS -->
+      <div id="pEv" style="display:none">
+        <div class="evpane">
+          <div class="evi">📋</div>
+          <div style="font-size:14px;font-weight:700;color:var(--txt)">Transfer Event — MYC Token</div>
+          <div class="evsig">Transfer(address indexed from, address indexed to, uint256 value)</div>
+          <div class="evtbl" id="evtbl"></div>
+        </div>
+      </div>
+    </div><!-- .card detail -->
+
+  </div><!-- sMain -->
+</div><!-- .page -->
+
+<!-- Hidden data store -->
+<span id="_txid" style="display:none"></span>
+<span id="_bh"   style="display:none"></span>
+<span id="_from" style="display:none"></span>
+<span id="_to"   style="display:none"></span>
+<span id="_ct"   style="display:none">MYCTokenContract0000000000000000</span>
+
+<div class="toast" id="toast">✓ Copied!</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   MyCoin Explorer — Transaction Details
+   ✓ Public — No login required
+   ✓ Dark theme matching screenshot
+   ✓ Connected to MyCoin v3 API
+   Usage: /tx.html?tx=<txid>
+═══════════════════════════════════════════════════════════ */
+const API  = window.MYCOIN_API
+  || (location.hostname==='localhost'||location.hostname==='127.0.0.1'
+      ? 'http://localhost:3000' : location.origin);
+
+const QS   = new URLSearchParams(location.search);
+const TXID = QS.get('tx')||QS.get('txid')||QS.get('hash')||'';
+let sym = 'MYC';
+
+/* ── Boot ────────────────────────────────────────── */
+(async()=>{
+  // Load network info first
+  try{
+    const r=await fetch(API+'/api/coin-info');
+    if(r.ok){
+      const d=await r.json();
+      sym=d.symbol||'MYC';
+      set('ttsym',sym);
+      if(d.network==='testnet'){
+        const el=document.getElementById('netTag');
+        el.textContent='TESTNET';
+        el.style.cssText='background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--grn)';
+      }
+    }
+  }catch{}
+
+  if(!TXID){ showNF(); return; }
+
+  // Load transaction (no token needed — public endpoint)
+  let tx=null;
+  try{
+    const r=await fetch(API+'/api/tx/'+TXID);
+    if(r.ok) tx=norm(await r.json());
+  }catch{}
+
+  if(!tx){ showNF(); return; }
+
+  paint(tx);
+  show('sMain');
+  if(!tx.ok) startPoll(TXID);
+})();
+
+/* ── Normalize API response ──────────────────────── */
+function norm(raw){
+  if(!raw||raw.error) return null;
+  let from=raw.from||raw.sender||'';
+  if(!from&&raw.inputs?.length) from=raw.inputs[0].address||'';
+  let to=raw.to||raw.recipient||'', amt=0;
+  if(!to&&raw.outputs?.length){
+    const o=raw.outputs.find(x=>x.address&&x.address!==from)||raw.outputs[0];
+    to=o.address||''; amt=+o.amount/1e8;
+  }
+  if(!amt&&raw.amount) amt=+raw.amount/1e8;
+  if(!amt&&raw.value)  amt=+raw.value/1e8;
+  const c=+(raw.confirmations||0);
+  return{
+    id:   raw.id||raw.txid||raw.hash||TXID,
+    bh:   raw.blockHash||raw.block_hash||'',
+    bnum: raw.blockHeight||raw.block_height||0,
+    ts:   raw.timestamp||Date.now(),
+    conf: c,
+    ok:   c>0||raw.status==='confirmed',
+    from, to, amt,
+    fee:  +(raw.fee||0)/1e8,
+    bw:   raw.bandwidth||Math.max(180,Math.ceil(JSON.stringify(raw).length/8)),
+    en:   raw.energy||0,
+  };
+}
+
+/* ── Render all fields ───────────────────────────── */
+function paint(tx){
+  const {id,bh,bnum,ts,conf,ok,from,to,amt,fee,bw,en}=tx;
+  const s=(a,f=16,b=9)=>!a?'—':a.length>f+b+3?a.slice(0,f)+'...'+a.slice(-b):a;
+
+  // store full values for copy buttons
+  set('_txid',id); set('_bh',bh); set('_from',from); set('_to',to);
+
+  // ── Banner ──
+  document.getElementById('banner').innerHTML=`
+    <button class="achip" onclick="cpTxt('${esc(from)}')">
+      <span class="sym" style="font-size:11px;opacity:.5">⊗</span>
+      ${s(from,13,8)}
+      <span class="ci">⎘</span>
+    </button>
+    <span class="bword">transferred</span>
+    <div class="amtbadge">
+      <span class="coin-m">M</span>
+      <span class="an">${fn(amt)}</span>
+      <span class="as">${sym}</span>
+    </div>
+    <span class="barrow">←</span>
+    <span class="bword">To</span>
+    <button class="achip" onclick="cpTxt('${esc(to)}')">
+      <span class="sym" style="font-size:11px;opacity:.5">⊗</span>
+      ${s(to,13,8)}
+      <span class="ci">⎘</span>
+    </button>
+  `;
+
+  // ── Hash ──
+  document.getElementById('hashEl').innerHTML=
+    `<span class="hl">${id.slice(0,24)}</span>${id.slice(24)}`;
+
+  // ── Block & Time ──
+  const bl=document.getElementById('blnk');
+  if(bnum){ bl.textContent=bnum.toLocaleString('en'); bl.href='?block='+bnum; }
+  else    { bl.textContent='Awaiting block...'; bl.removeAttribute('href'); bl.style.color='var(--pend)'; }
+  set('tago',  ago(ts));
+  set('texact',utc(ts));
+
+  // ── Status ──
+  paintStatus(ok,conf);
+
+  // ── SRs ──
+  paintSRs(ok,conf);
+
+  // ── Resources ──
+  set('rbw',  bw.toLocaleString('en'));
+  set('ren',  en>0?en.toLocaleString('en'):'0');
+  const feeStr=fn(fee>0?fee:0.001)+' '+sym;
+  set('feelimit','Max Fee: '+feeStr);
+  set('feecap',  'Max Fee: '+feeStr);
+
+  // ── Overview detail ──
+  setText('ownTxt', s(from,20,10));
+  setText('ctTxt',  s(g('_ct'),14,10));
+  setText('ttfTxt', s(from,12,7));
+  setText('tttTxt', s(to,  12,7));
+  set('ttamt', fn(amt));
+  set('namt',  (fee>0?fn(fee):'0')+' '+sym);
+
+  // ── Params table ──
+  document.getElementById('pr').textContent = s(to,20,12);
+  set('pa', Math.round(amt*1e8).toLocaleString('en'));
+
+  // ── Event log ──
+  document.getElementById('evtbl').innerHTML=`
+    <div class="evrow">
+      <span class="evkey">From</span>
+      <span class="evval">${s(from)}</span>
+    </div>
+    <div class="evrow">
+      <span class="evkey">To</span>
+      <span class="evval">${s(to)}</span>
+    </div>
+    <div class="evrow">
+      <span class="evkey">Amount</span>
+      <span class="evval" style="color:var(--gold)">${Math.round(amt*1e8).toLocaleString('en')}</span>
+    </div>
+  `;
+}
+
+function paintStatus(ok,conf){
+  const b=document.getElementById('sbadge');
+  const t=document.getElementById('stext');
+  const c=document.getElementById('cbar');
+  const l=document.getElementById('clbl');
+  if(ok){
+    b.className='badge b-conf';
+    b.innerHTML='<span class="pdot"></span>Confirmed';
+    t.innerHTML='Confirmed توسط بیش From <strong style="color:var(--grn);font-family:\'JetBrains Mono\',monospace">'+conf+'</strong> blocks';
+    c.style.display='flex';
+    l.textContent='+'+conf+' confirmations ✓';
+  } else {
+    b.className='badge b-pend';
+    b.textContent='⏳ Pending';
+    t.textContent='تراکنش Pending شبکه است';
+    c.style.display='none';
+  }
+}
+
+function paintSRs(ok,conf){
+  const names=['Crypto Labs 🔮','Abra Capital 📊','Binance Staking 🏦','BlockAnalysis 🔍'];
+  const n=ok?Math.min(19,conf):0;
+  let h='';
+  names.forEach(v=>{ h+='<span class="srchip">'+v+'</span>'; });
+  h+='<span class="srchip srmore">+15 دیگر</span>';
+  // prepend count if confirmed
+  if(ok){
+    const cnt='<span class="srchip" style="font-family:\'JetBrains Mono\',monospace;font-weight:700;color:var(--txt)">'+n+'</span>';
+    h=cnt+h;
+  }
+  document.getElementById('srlist').innerHTML=h;
+}
+
+/* ── Poll confirmations ──────────────────────────── */
+let _poll=null;
+function startPoll(id){
+  clearInterval(_poll);
+  let n=0;
+  _poll=setInterval(async()=>{
+    if(++n>72){clearInterval(_poll);return;}
+    try{
+      const r=await fetch(API+'/api/tx/'+id);
+      if(!r.ok) return;
+      const tx=norm(await r.json());
+      if(!tx) return;
+      if(tx.conf>0){
+        paintStatus(true,tx.conf);
+        paintSRs(true,tx.conf);
+        const bl=document.getElementById('blnk');
+        if(tx.bnum){
+          bl.textContent=tx.bnum.toLocaleString('en');
+          bl.href='?block='+tx.bnum;
+          bl.style.color='';
+        }
+        if(tx.conf>=6) clearInterval(_poll);
+      }
+    }catch{}
+  },5000);
+}
+
+/* ── States ──────────────────────────────────────── */
+function showNF(){ show('sNF'); }
+function show(id){
+  ['sLoad','sNF','sMain'].forEach(x=>{
+    document.getElementById(x).style.display=x===id?'block':'none';
+  });
+}
+
+/* ── Tabs ────────────────────────────────────────── */
+function stab(el,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('pOv').style.display=id==='pOv'?'':'none';
+  document.getElementById('pEv').style.display=id==='pEv'?'':'none';
+}
+
+/* ── Search ──────────────────────────────────────── */
+function go(){
+  const v=document.getElementById('si').value.trim();
+  if(!v) return;
+  const u=new URL(location.href); u.searchParams.set('tx',v); location.href=u;
+}
+function nfGo(){
+  const v=document.getElementById('nfIn').value.trim();
+  if(!v) return;
+  const u=new URL(location.href); u.searchParams.set('tx',v); location.href=u;
+}
+
+/* ── Copy ────────────────────────────────────────── */
+function cpTxt(t){
+  navigator.clipboard.writeText(t||'').catch(()=>{});
+  showToast('✓ Copied!');
+}
+function cpBtn(btn,val){
+  navigator.clipboard.writeText((val||'').trim()).catch(()=>{});
+  if(btn){
+    const prev=btn.innerHTML; btn.classList.add('ok'); btn.textContent='✓';
+    setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML=prev;},1500);
+  }
+  showToast('✓ Copied!');
+}
+
+/* ── Utils ───────────────────────────────────────── */
+function fn(n){
+  if(!n||isNaN(n)) return '0';
+  return parseFloat(Number(n).toFixed(8))
+    .toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:8});
+}
+function ago(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)    return s+' s ago';
+  if(s<3600)  return Math.floor(s/60)+' m ago';
+  if(s<86400) return Math.floor(s/3600)+' h ago';
+  return Math.floor(s/86400)+' d ago';
+}
+function utc(ts){
+  return new Date(ts).toISOString().replace('T',' ').slice(0,19)+' (UTC)';
+}
+function esc(s){ return (s||'').replace(/'/g,"\\'"); }
+function g(id){ return (document.getElementById(id)?.textContent||'').trim(); }
+function set(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+function setText(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+function showToast(m){
+  const t=document.getElementById('toast'); t.textContent=m; t.classList.add('on');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),2200);
+}
+
+/* ── Listeners ───────────────────────────────────── */
+document.getElementById('si').addEventListener('keydown',e=>{ if(e.key==='Enter') go(); });
+document.getElementById('nfIn')?.addEventListener('keydown',e=>{ if(e.key==='Enter') nfGo(); });
+</script>
+
+
+<!-- LICENSE footer badge -->
+<div style="position:fixed;bottom:6px;left:12px;z-index:8999;font-size:9.5px;color:rgba(255,255,255,.18);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px">
+  <a href="/LICENSE" target="_blank" style="color:rgba(240,165,0,.35);text-decoration:none;transition:color .2s" onmouseover="this.style.color='rgba(240,165,0,.8)'" onmouseout="this.style.color='rgba(240,165,0,.35)'">© 2026 MyCoin Project</a>
+  <span style="opacity:.4">·</span>
+  <span style="opacity:.4">PROPRIETARY</span>
+</div>
+<!-- ═══ MyCoin AI Widget ═══ -->
+<!-- ═══════════════════════════════════════════════════════════
+     MyCoin AI — Floating Chat Widget
+     Uses Claude claude-haiku-4-5 (Free tier) via /api/ai/chat
+     Injects live blockchain context automatically server-side.
+════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ── AI Widget global styles ── */
+#ai-fab{
+  position:fixed;bottom:28px;right:28px;z-index:9000;
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(135deg,#0a0f1a,#1a1f35);
+  border:1.5px solid rgba(79,143,255,.45);
+  box-shadow:0 0 0 0 rgba(79,143,255,.3),0 8px 28px rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .25s;
+  animation:fabPulse 3s ease-in-out infinite;
+}
+@keyframes fabPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(79,143,255,.3),0 8px 28px rgba(0,0,0,.55)}
+  50%{box-shadow:0 0 0 8px rgba(79,143,255,0),0 8px 28px rgba(0,0,0,.55)}
+}
+#ai-fab:hover{transform:scale(1.08);border-color:rgba(79,143,255,.8)}
+#ai-fab svg{width:24px;height:24px}
+#ai-badge{
+  position:absolute;top:-3px;right:-3px;
+  width:16px;height:16px;border-radius:50%;
+  background:#3b82f6;border:2px solid #050708;
+  font-size:8px;color:#fff;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  display:none;
+}
+
+#ai-panel{
+  position:fixed;bottom:96px;right:28px;z-index:9000;
+  width:380px;max-height:580px;
+  background:linear-gradient(160deg,#0a0f1a 0%,#0e1525 100%);
+  border:1px solid rgba(79,143,255,.25);
+  border-radius:18px;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 0 1px rgba(79,143,255,.08),inset 0 1px 0 rgba(255,255,255,.05);
+  display:none;flex-direction:column;overflow:hidden;
+  animation:panelSlide .3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes panelSlide{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+#ai-panel.open{display:flex}
+
+.ai-head{
+  padding:14px 16px 12px;
+  border-bottom:1px solid rgba(79,143,255,.12);
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(90deg,rgba(59,130,246,.08),transparent);
+  flex-shrink:0;
+}
+.ai-head-l{display:flex;align-items:center;gap:10px}
+.ai-avatar{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 0 12px rgba(59,130,246,.35);
+}
+.ai-name{font-size:13px;font-weight:800;color:#e2e8f0;letter-spacing:-.2px}
+.ai-model{font-size:9.5px;color:#4b6fa8;font-family:"JetBrains Mono",monospace;margin-top:1px}
+.ai-status{display:flex;align-items:center;gap:4px;font-size:9px;color:#22c55e}
+.ai-status::before{content:"";width:5px;height:5px;border-radius:50%;background:#22c55e;animation:ppblue 2s infinite}
+@keyframes ppblue{0%,100%{opacity:1}50%{opacity:.3}}
+.ai-close{
+  width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);color:#64748b;
+  cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.ai-close:hover{background:rgba(255,255,255,.08);color:#e2e8f0}
+
+.ai-messages{
+  flex:1;overflow-y:auto;padding:14px;
+  display:flex;flex-direction:column;gap:10px;
+  scroll-behavior:smooth;
+}
+.ai-messages::-webkit-scrollbar{width:3px}
+.ai-messages::-webkit-scrollbar-thumb{background:rgba(79,143,255,.2);border-radius:3px}
+
+.ai-msg{display:flex;gap:8px;align-items:flex-start;animation:msgIn .25s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-bubble{
+  max-width:82%;padding:10px 13px;border-radius:12px;
+  font-size:12.5px;line-height:1.6;
+}
+.ai-msg.bot  .ai-bubble{
+  background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.18);
+  color:#cbd5e1;border-radius:4px 12px 12px 12px;
+}
+.ai-msg.user .ai-bubble{
+  background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(37,99,235,.15));
+  border:1px solid rgba(59,130,246,.3);
+  color:#e2e8f0;border-radius:12px 4px 12px 12px;
+}
+.ai-msg.bot .ai-mic{
+  width:26px;height:26px;border-radius:8px;flex-shrink:0;margin-top:1px;
+  background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.ai-typing{display:flex;gap:4px;align-items:center;padding:10px 13px}
+.ai-typing span{
+  width:6px;height:6px;border-radius:50%;background:#3b82f6;
+  animation:typeBounce .9s ease infinite;
+}
+.ai-typing span:nth-child(2){animation-delay:.15s}
+.ai-typing span:nth-child(3){animation-delay:.3s}
+@keyframes typeBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+
+.ai-suggestions{
+  padding:0 14px 10px;display:flex;gap:6px;flex-wrap:wrap;
+}
+.ai-chip{
+  font-size:10.5px;color:#4b6fa8;
+  background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.15);
+  border-radius:20px;padding:4px 10px;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.ai-chip:hover{background:rgba(59,130,246,.15);color:#93c5fd;border-color:rgba(59,130,246,.35)}
+
+.ai-input-wrap{
+  padding:10px 12px 12px;border-top:1px solid rgba(79,143,255,.1);
+  display:flex;gap:8px;align-items:flex-end;flex-shrink:0;
+}
+.ai-input{
+  flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(79,143,255,.18);
+  border-radius:10px;padding:9px 12px;color:#e2e8f0;
+  font-family:inherit;font-size:12.5px;resize:none;outline:none;
+  max-height:100px;min-height:36px;transition:border-color .2s;
+  line-height:1.5;
+}
+.ai-input:focus{border-color:rgba(79,143,255,.45)}
+.ai-input::placeholder{color:#2d4a6e}
+.ai-send{
+  width:36px;height:36px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;
+  color:#fff;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;box-shadow:0 4px 12px rgba(59,130,246,.3);
+}
+.ai-send:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(59,130,246,.45)}
+.ai-send:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.ai-footer{
+  padding:5px 12px 3px;font-size:9px;color:#1e3a5f;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0;
+}
+.ai-footer a{color:#1e3a5f;text-decoration:none}
+.ai-footer a:hover{color:#3b82f6}
+
+@media(max-width:500px){
+  #ai-panel{width:calc(100vw - 32px);right:16px;bottom:84px}
+}
+</style>
+
+<!-- Floating Action Button -->
+<button id="ai-fab" onclick="aiToggle()" title="MyCoin AI Assistant (Claude)">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2C6.48 2 2 6.48 2 12C2 13.85 2.52 15.58 3.42 17.05L2 22L7.17 20.62C8.59 21.48 10.24 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="url(#aiGrad)"/>
+    <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="900" fill="white" font-family="Arial">AI</text>
+    <defs>
+      <linearGradient id="aiGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#1e40af"/>
+        <stop offset="100%" stop-color="#3b82f6"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div id="ai-badge">!</div>
+</button>
+
+<!-- AI Chat Panel -->
+<div id="ai-panel">
+  <div class="ai-head">
+    <div class="ai-head-l">
+      <div class="ai-avatar">🤖</div>
+      <div>
+        <div class="ai-name">MyCoin AI</div>
+        <div class="ai-model">claude-haiku · Anthropic</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="ai-status">Online</div>
+      <button class="ai-close" onclick="aiToggle()">✕</button>
+    </div>
+  </div>
+
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg bot">
+      <div class="ai-mic">🤖</div>
+      <div class="ai-bubble">
+        Hello! I'm MyCoin AI, powered by Claude. I have live access to your blockchain data and can help with:<br><br>
+        • 🔍 Transaction &amp; block analysis<br>
+        • 💰 Wallet &amp; address queries<br>
+        • ⛏️ Mining questions<br>
+        • 🔐 Security guidance<br>
+        • 📊 Network statistics<br><br>
+        What would you like to know?
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-suggestions" id="aiSugg">
+    <span class="ai-chip" onclick="aiAsk(this.textContent)">What is my current balance?</span>
+    <span class="ai-chip" onclick="aiAsk(this.textContent)">How does MYC mining work?</span>
+    <span class="ai-chip" onclick="aiAsk(this.textContent)">Latest block info</span>
+    <span class="ai-chip" onclick="aiAsk(this.textContent)">How to read an MYC address?</span>
+  </div>
+
+  <div class="ai-input-wrap">
+    <textarea class="ai-input" id="aiInput" placeholder="Ask anything about MyCoin..."
+      rows="1" maxlength="2000"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSend()}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+    <button class="ai-send" id="aiSendBtn" onclick="aiSend()" title="Send">
+      <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+        <path d="M2 8l12-6-6 12V9L2 8z" fill="white"/>
+      </svg>
+    </button>
+  </div>
+  <div class="ai-footer">
+    Powered by <a href="https://anthropic.com" target="_blank">Anthropic Claude</a>
+    &nbsp;·&nbsp; <a href="/LICENSE" target="_blank">© 2026 MyCoin Project</a>
+  </div>
+</div>
+
+<script>
+/* ── MyCoin AI Widget ── */
+(function() {
+  const API_BASE = window.MYCOIN_API || '';
+  let   history  = [];
+  let   open     = false;
+  let   tok      = sessionStorage.getItem('adm_tok') ||
+                   sessionStorage.getItem('w_tok')   ||
+                   localStorage.getItem('mc_token')  ||
+                   localStorage.getItem('myc_token') || '';
+
+  // Auto-discover token from page context
+  setTimeout(() => {
+    tok = sessionStorage.getItem('adm_tok') ||
+          sessionStorage.getItem('w_tok')   ||
+          localStorage.getItem('mc_token')  ||
+          localStorage.getItem('myc_token') || tok;
+  }, 500);
+
+  window.aiToggle = function() {
+    open = !open;
+    const p = document.getElementById('ai-panel');
+    if (open) { p.classList.add('open'); document.getElementById('aiInput').focus(); }
+    else       p.classList.remove('open');
+  };
+
+  window.aiAsk = function(text) {
+    document.getElementById('aiInput').value = text;
+    document.getElementById('aiSugg').style.display = 'none';
+    aiSend();
+  };
+
+  window.aiSend = async function() {
+    const input = document.getElementById('aiInput');
+    const msg   = input.value.trim();
+    if (!msg) return;
+
+    // Add user bubble
+    addMsg('user', msg);
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('aiSugg').style.display = 'none';
+
+    // Show typing indicator
+    const typingId = addTyping();
+    document.getElementById('aiSendBtn').disabled = true;
+
+    try {
+      const r = await fetch(API_BASE + '/api/ai/chat', {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer ' + tok,
+        },
+        body: JSON.stringify({ message: msg, history }),
+      });
+
+      removeTyping(typingId);
+
+      if (r.status === 401) {
+        addMsg('bot', '🔒 Please log in to use the AI assistant. Visit the <a href="/dashboard.html" style="color:#3b82f6">Dashboard</a> or <a href="/admin.html" style="color:#3b82f6">Admin Panel</a> to sign in.', true);
+        return;
+      }
+      if (r.status === 429) {
+        addMsg('bot', '⏳ You\'ve sent too many messages. Please wait a moment before trying again.');
+        return;
+      }
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        addMsg('bot', '⚠️ ' + (err.error || 'AI service unavailable. Please try again.'));
+        return;
+      }
+
+      const d = await r.json();
+      addMsg('bot', d.reply);
+
+      // Maintain rolling history (last 10 turns)
+      history.push({ role: 'user', content: msg });
+      history.push({ role: 'assistant', content: d.reply });
+      if (history.length > 20) history = history.slice(-20);
+
+    } catch (e) {
+      removeTyping(typingId);
+      addMsg('bot', '⚠️ Connection error: ' + e.message + '\n\nMake sure the MyCoin node is running.');
+    } finally {
+      document.getElementById('aiSendBtn').disabled = false;
+    }
+  };
+
+  function addMsg(role, text, isHtml = false) {
+    const wrap = document.getElementById('aiMessages');
+    const div  = document.createElement('div');
+    div.className = 'ai-msg ' + role;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'ai-bubble';
+    // Simple markdown → HTML
+    const formatted = formatText(text);
+    if (isHtml) bubble.innerHTML = formatted;
+    else        bubble.innerHTML = formatted;
+
+    if (role === 'bot') {
+      const mic = document.createElement('div');
+      mic.className = 'ai-mic';
+      mic.textContent = '🤖';
+      div.appendChild(mic);
+    }
+    div.appendChild(bubble);
+    wrap.appendChild(div);
+    wrap.scrollTop = wrap.scrollHeight;
+    return div.id;
+  }
+
+  function formatText(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code style="font-family:JetBrains Mono,monospace;font-size:11px;background:rgba(59,130,246,.1);padding:1px 5px;border-radius:3px">$1</code>')
+      .replace(/\n/g, '<br>');
+  }
+
+  let typingCtr = 0;
+  function addTyping() {
+    const id   = 'typing-' + (++typingCtr);
+    const wrap = document.getElementById('aiMessages');
+    const div  = document.createElement('div');
+    div.className = 'ai-msg bot';
+    div.id        = id;
+    div.innerHTML = '<div class="ai-mic">🤖</div><div class="ai-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>';
+    wrap.appendChild(div);
+    wrap.scrollTop = wrap.scrollHeight;
+    return id;
+  }
+
+  function removeTyping(id) {
+    document.getElementById(id)?.remove();
+  }
+})();
+</script>
+<!-- ═══ /AI Widget ═══ -->
+
+</body>
+</html>
